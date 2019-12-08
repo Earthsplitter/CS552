@@ -1,10 +1,10 @@
 var log = console.log;
 
-var connections = {},   // 链接列表
-  partner = {},       // 用于在对等端进行映射
-  messagesFor = {};   // 包含要发送给客户的消息的数组
+var connections = {},   // connection list
+  partner = {},       // p2p map
+  messagesFor = {};   // message array
 
-// 排队发送json响应
+// respond with JSON
 function webrtcResponse(response, res) {
   log('Replying with webrtc response ' + JSON.stringify(response))
   res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -12,13 +12,13 @@ function webrtcResponse(response, res) {
   res.end()
 }
 
-// webrtc发送error响应
+// webrtc send error
 function webrtcError(err, res) {
   log('Replying with webrtc error ' + err)
   webrtcResponse({ 'err': err }, res)
 }
 
-// 处理XHR http请求，以使用给定密钥进行连接
+// handle XHR http request, connect with given key
 function connect(info) {
   var res = info.res,
     query = info.query,

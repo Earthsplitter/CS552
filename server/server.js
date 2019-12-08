@@ -83,8 +83,8 @@ function serveFile(filePath, info) {
       return;
     }
 
-    let readBuffer = new Buffer(20480)
-    fs.read(fd, readBuffer, 0, 20480, 0, (err, readBytes) => {
+    let readBuffer = new Buffer(163840)
+    fs.read(fd, readBuffer, 0, 163840, 0, (err, readBytes) => {
       if (err) {
         console.log(err.message);
         fs.close(fd);
