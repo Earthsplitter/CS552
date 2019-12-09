@@ -2,7 +2,7 @@
   <div id="app">
     <div v-show="status == 'init' || status == 'Waiting'" class="startChat">
       <div class="startBox">
-        <input 
+        <input
           class="channelInput"
           v-model.number="channelNumber"
           type="number"
@@ -19,7 +19,7 @@
           <div class="messages">
             <div v-for="(message, index) in messages" :key="index">{{message}}</div>
           </div>
-          <input class="outBoundInput" v-model="outBoundMessage" />
+          <textarea class="outBoundInput" v-model="outBoundMessage"></textarea>
           <button class="sendButton" @click="send(outBoundMessage)">Send</button>
         </div>
         <div class="videoBox">
@@ -64,7 +64,9 @@ export default {
       let key = this.channelNumber
       handleMsg = msg => {
         if (typeof msg === 'string') {
-          this.messages.push(`Received: ${msg}`)
+          const receiveMsg = `<div class="messageBox receiveMessageBox triangleLeft">${msg}</div><div class="clear"></div>`;
+          this.messages.push(receiveMsg);
+          // this.messages.push(`Received: ${msg}`)
         }
         if (msg.type === 'offer') {
           this.pc.setRemoteDescription(new RTCSessionDescription(msg))
@@ -199,7 +201,7 @@ export default {
           get(function (response) {
             var i, msgs = (response && response.msgs) || [];
 
-            // if messages property exists, then we are connected   
+            // if messages property exists, then we are connected
             if (response.msgs && (status !== "connected")) {
               // switch status to connected since it is now!
               status = "connected";
@@ -354,11 +356,13 @@ export default {
 
     send(msg) {
       if (typeof msg === 'string') {
-        this.messages.push(`Sent: ${msg}`)
+        const sendMsg = `<div class="messageBox sendMessageBox triangleRight">${msg}</div><div class="clear"></div>`;
+        this.messages.push(sendMsg);
+        // this.messages.push(`Sent: ${msg}`)
       }
       this.signalingChannel.send(msg)
     },
-    
+
     call() {
       this.pc.createOffer(localDesc => {
         this.pc.setLocalDescription(localDesc)
@@ -474,7 +478,7 @@ body {
   background-color: white;
   height: 80%;
   width: 70%;
-
+  min-width: 900px;
   display: flex;
   justify-content: center;
 }
@@ -501,11 +505,96 @@ body {
 .messages {
   height: 80%;
   width: 100%;
+  overflow: auto;
+}
+.messages::-webkit-scrollbar {
+  width: 10px;
+}
+.messages::-webkit-scrollbar-track {
+  border-radius: 8px;
+}
+.messages::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.messageBox {
+  width: auto;
+  max-width: 60%;
+  display: inline-block;
+  overflow-wrap: break-word;
+  text-align: left;
+  padding: 5px;
+  margin: 5px 0;
+  position: relative;
+  border-radius: 2px;
+}
+.sendMessageBox {
+  background-color: #b2e281;
+  color: black;
+  float: right;
+  margin-right: 20px;
+}
+.receiveMessageBox {
+  background-color: white;
+  color: black;
+  float: left;
+  margin-left: 20px;
+}
+
+.triangleLeft:before {
+  content: '';
+  border-right: 8px solid #FFFFFF;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 0;
+  position: absolute;
+  left: 12px;
+  top: 25px;
+  margin-left: -20px;
+  margin-top: -20px;
+}
+.triangleLeft:after {
+  content: '';
+  border-right: 8px solid #FFFFFF;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 0;
+  position: absolute;
+  left: 12px;
+  top: 25px;
+  margin-left: -19px;
+  margin-top: -20px;
+}
+.triangleRight:before {
+  content: '';
+  border-right: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid #b2e281;
+  position: absolute;
+  right: 12px;
+  top: 25px;
+  margin-right: -20px;
+  margin-top: -20px;
+}
+.triangleRight:after {
+  content: '';
+  border-right: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid #b2e281;
+  position: absolute;
+  right: 12px;
+  top: 25px;
+  margin-right: -19px;
+  margin-top: -20px;
 }
 
 .outBoundInput {
   width: 99%;
-  height: 30px;
+  height: 70px;
+  resize: none;
 }
 
 .cameras {
